@@ -30,8 +30,8 @@
           // Add GeoJSON layer to the map with popups
           const geoJsonLayer = L.geoJSON(data, {
             onEachFeature: function (feature, layer) {
-              const name = feature.properties.name;
-              const description = feature.properties.description;
+              const name = feature.properties.Name;
+              const description = feature.properties.Description;
               layer.bindPopup(`<b>${name}</b><br>${description}`);
             },
           }).addTo(map);

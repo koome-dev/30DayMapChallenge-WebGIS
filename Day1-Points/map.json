@@ -4,13 +4,11 @@
     {
       "type": "Feature",
       "properties": {
-        "Desciption": "Center of maasais"
+        "Name": "Kajiado",
+        "Description": "Center of maasais"
       },
       "geometry": {
-        "coordinates": [
-          36.79240150571002,
-          -1.8466340221582414
-        ],
+        "coordinates": [36.79240150571002, -1.8466340221582414],
         "type": "Point"
       },
       "id": 0
@@ -18,13 +16,11 @@
     {
       "type": "Feature",
       "properties": {
+        "Name": "Machakos",
         "Description": "Site that defies gravity"
       },
       "geometry": {
-        "coordinates": [
-          37.268630195505324,
-          -1.5215353690961848
-        ],
+        "coordinates": [37.268630195505324, -1.5215353690961848],
         "type": "Point"
       },
       "id": 1
@@ -32,13 +28,11 @@
     {
       "type": "Feature",
       "properties": {
+        "Name": "Thika",
         "Description": "Manufacturing hub"
       },
       "geometry": {
-        "coordinates": [
-          37.08221794309054,
-          -1.033458123070929
-        ],
+        "coordinates": [37.08221794309054, -1.033458123070929],
         "type": "Point"
       },
       "id": 2
@@ -46,13 +40,11 @@
     {
       "type": "Feature",
       "properties": {
+        "Name": "Nairobi",
         "Description": "The capital of Kenya"
       },
       "geometry": {
-        "coordinates": [
-          36.824146986079256,
-          -1.2795566352513674
-        ],
+        "coordinates": [36.824146986079256, -1.2795566352513674],
         "type": "Point"
       },
       "id": 3
@@ -60,13 +52,11 @@
     {
       "type": "Feature",
       "properties": {
+        "Name": "Narok",
         "Description": "Home of maasai mara"
       },
       "geometry": {
-        "coordinates": [
-          35.87643660401375,
-          -1.0932838045027609
-        ],
+        "coordinates": [35.87643660401375, -1.0932838045027609],
         "type": "Point"
       },
       "id": 4
@@ -74,13 +64,11 @@
     {
       "type": "Feature",
       "properties": {
-        "Desciption": "Home of master sculptors"
+        "Name": "Kitui",
+        "Description": "Home of master sculptors"
       },
       "geometry": {
-        "coordinates": [
-          38.01841128060235,
-          -1.3664007984549613
-        ],
+        "coordinates": [38.01841128060235, -1.3664007984549613],
         "type": "Point"
       },
       "id": 5
@@ -88,13 +76,11 @@
     {
       "type": "Feature",
       "properties": {
+        "Name": "Embu",
         "Description": "Seven folks hydro-dams"
       },
       "geometry": {
-        "coordinates": [
-          37.46573006336004,
-          -0.5410343519039884
-        ],
+        "coordinates": [37.46573006336004, -0.5410343519039884],
         "type": "Point"
       },
       "id": 6
