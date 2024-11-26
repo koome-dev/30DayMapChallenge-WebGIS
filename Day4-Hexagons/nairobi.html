@@ -49,7 +49,7 @@
           container: "viewDiv",
           map: map,
           center: [36.82, -1.29], // Nairobi's approximate center
-          zoom: 5,
+          zoom: 10,
         });
 
         const hexLayer = new GraphicsLayer();
@@ -74,7 +74,7 @@
             // Render the Nairobi boundary on the map
             const boundaryPolygon = new Polygon({
               rings: nairobiBoundaryPolygon.geometry.coordinates,
-              spatialReference: { EPSG: 32737 },
+              spatialReference: { wkid: 3857 },
             });
 
             const boundaryGraphic = new Graphic({
@@ -93,16 +93,16 @@
               'https://overpass-api.de/api/interpreter?data=[out:json];area[name="Nairobi"]->.searchArea;node["amenity"="bar"](area.searchArea);out;'
             )
               .then((response) => response.json())
-              .then((cafeData) => {
-                const cafes = cafeData.elements.map((cafe) => {
-                  return turf.point([cafe.lon, cafe.lat]);
+              .then((barData) => {
+                const bars = barData.elements.map((bar) => {
+                  return turf.point([bar.lon, bar.lat]);
                 });
 
                 // Count cafes within each hexagon
                 hexGrid.features.forEach((hex) => {
                   let count = 0;
-                  cafes.forEach((cafe) => {
-                    if (turf.booleanPointInPolygon(cafe, hex)) {
+                  bars.forEach((bar) => {
+                    if (turf.booleanPointInPolygon(bar, hex)) {
                       count++;
                     }
                   });
@@ -114,7 +114,7 @@
                   const color = getColor(hex.properties.count);
                   const polygon = new Polygon({
                     rings: hex.geometry.coordinates,
-                    spatialReference: { EPSG: 32737 },
+                    spatialReference: { wkid: 3857 },
                   });
                   const hexGraphic = new Graphic({
                     geometry: webMercatorUtils.geographicToWebMercator(polygon),
@@ -125,8 +125,8 @@
                     },
                     attributes: hex.properties,
                     popupTemplate: {
-                      title: "Café Density",
-                      content: `Cafes in this area: ${hex.properties.count}`,
+                      title: "Bar Density",
+                      content: `Bars in this area: ${hex.properties.count}`,
                     },
                   });
                   hexLayer.add(hexGraphic);
@@ -162,7 +162,7 @@
             }
           })
           .catch((error) =>
-            console.error("Error loading Berlin boundary data:", error)
+            console.error("Error loading Nairobi boundary data:", error)
           );
       });
     </script>
