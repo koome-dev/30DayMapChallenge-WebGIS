@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Counties covered</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/@turf/turf/turf.min.js"></script>
+    <style>
+      .leaflet-container img.leaflet-tile {
+        mix-blend-mode: normal;
+        width: 257px !important;
+        height: 257px !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map" style="width: 100%; height: 500px"></div>
+    <div id="distance" style="padding: 10px; font-size: 16px"></div>
+
+    <script>
+      // Initialize the map
+      const map = L.map("map").setView([-1.2921, 36.8219], 6);
+
+      // Add a dark base layer
+      let Stadia_AlidadeSmoothDark = L.tileLayer(
+        "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.{ext}",
+        {
+          minZoom: 0,
+          maxZoom: 20,
+          attribution:
+            '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          ext: "png",
+        }
+      ).addTo(map);
+
+      const visitedCounties = new Set();
+      const waypoints = [];
+
+      // Load cities and add them as markers first
+      fetch("map2.json")
+        .then((response) => response.json())
+        .then((data) => {
+          let totalDistance = 0;
+
+          // Add city markers and collect coordinates
+          const geoJsonLayer = L.geoJSON(data, {
+            onEachFeature: function (feature, layer) {
+              const name = feature.properties.Name;
+              const description = feature.properties.Description;
+              layer.bindPopup(`<b>${name}</b><br>${description}`);
+
+              // Collect waypoints for polyline and distance calculation
+              waypoints.push([
+                feature.geometry.coordinates[1],
+                feature.geometry.coordinates[0],
+              ]);
+            },
+          }).addTo(map);
+
+          // Draw polyline for travel route after markers
+          const polyline = L.polyline(waypoints, { color: "red" }).addTo(map);
+
+          // Calculate total distance
+          for (let i = 1; i < waypoints.length; i++) {
+            const from = turf.point([waypoints[i - 1][1], waypoints[i - 1][0]]);
+            const to = turf.point([waypoints[i][1], waypoints[i][0]]);
+            totalDistance += turf.distance(from, to, { units: "kilometers" });
+          }
+
+          // Display total distance
+          document.getElementById(
+            "distance"
+          ).innerHTML = `Total Distance between towns is: ${totalDistance.toFixed(
+            2
+          )} km`;
+        })
+        .catch((error) => console.error("Error loading city GeoJSON:", error));
+
+      // Load Kenya counties GeoJSON and add polygons last
+      fetch("kenya.geojson")
+        .then((response) => response.json())
+        .then((europeData) => {
+          L.geoJSON(europeData, {
+            style: {
+              color: "blue",
+              weight: 1,
+              fillColor: "lightblue",
+              fillOpacity: 0.05,
+            },
+            onEachFeature: function (feature, layer) {
+              const properties = feature.properties;
+              const popupContent =
+                `<b>County name:</b> ${properties.COUNTY_NAM}<br>` +
+                Object.keys(properties)
+                  .map((key) => `<b>${key}:</b> ${properties[key]}`)
+                  .join("<br>");
+              layer.bindPopup(popupContent);
+
+              // Check if visited towns are in this county
+              waypoints.forEach((cityCoords) => {
+                const cityPoint = turf.point([cityCoords[1], cityCoords[0]]);
+                const countryPolygon =
+                  feature.geometry.type === "Polygon"
+                    ? turf.polygon(feature.geometry.coordinates)
+                    : turf.multiPolygon(feature.geometry.coordinates);
+
+                if (turf.booleanPointInPolygon(cityPoint, countryPolygon)) {
+                  visitedCounties.add(properties.COUNTY_NAM);
+                }
+              });
+            },
+          }).addTo(map);
+
+          // Display visited countries after polygons are added
+          document.getElementById(
+            "distance"
+          ).innerHTML += `<br>Visited Counties: ${Array.from(
+            visitedCounties
+          ).join(", ")}`;
+        })
+        .catch((error) =>
+          console.error("Error loading Europe GeoJSON:", error)
+        );
+    </script>
+  </body>
+</html>
