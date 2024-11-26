@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Distance across kenyan towns</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- leaflet css -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    />
+    <!-- leaflet js -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/@turf/turf/turf.min.js"></script>
+  </head>
+  <body>
+    <div id="map" style="width: 100%; height: 500px"></div>
+    <div id="distance"></div>
+
+    <script>
+      // Initialize the map
+      const map = L.map("map").setView([-1.2921, 36.8219], 8); // Central starting point for better fit when loading
+
+      // Add a base layer
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 18,
+        attribution: "© OpenStreetMap contributors",
+      }).addTo(map);
+
+      // Fetch the GeoJSON file
+      fetch("map2.json")
+        .then((response) => response.json())
+        .then((data) => {
+          const waypoints = [];
+          let totalDistance = 0;
+          // Add GeoJSON layer to the map with popups
+          const geoJsonLayer = L.geoJSON(data, {
+            onEachFeature: function (feature, layer) {
+              const name = feature.properties.Name;
+              const description = feature.properties.Description;
+              layer.bindPopup(`<b>${name}</b><br>${description}`);
+
+              // add waypoints
+              waypoints.push([
+                feature.geometry.coordinates[1],
+                feature.geometry.coordinates[0],
+              ]);
+            },
+          }).addTo(map);
+
+          // Draw red polyline coneecting all waypoints
+          const polyline = L.polyline(waypoints, { color: "red" }).addTo(map);
+
+          // Calculate total distance between the kenyan town centers
+          for (let i = 1; i < waypoints.length; i++) {
+            // creating turf.js points with direct lat-long array
+            const from = turf.point([waypoints[i - 1][1], waypoints[i - 1][0]]);
+            const to = turf.point([waypoints[i][1], waypoints[i][0]]);
+            totalDistance += turf.distance(from, to, { units: "kilometers" });
+          }
+          console.log(totalDistance);
+
+          // Automatically zoom the map to fit all markers
+          map.fitBounds(geoJsonLayer.getBounds());
+          document.getElementById(
+            "distance"
+          ).innerHTML = `Total distance between towns : ${totalDistance.toFixed(
+            2
+          )} kilometers`;
+        })
+        .catch((error) => console.error("Error loading GeoJSON:", error));
+      // Display total distance
+    </script>
+  </body>
+</html>
