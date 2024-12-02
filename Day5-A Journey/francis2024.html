@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pope Francis Journey 2024</title>
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.30/esri/themes/dark/main.css"
+    />
+    <script src="https://js.arcgis.com/4.30/"></script>
+    <script src="https://unpkg.com/@turf/turf/turf.min.js"></script>
+    <style>
+      html,
+      body,
+      #map {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+
+    <script>
+      // Initialize the map
+      require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/Graphic",
+        "esri/layers/GraphicsLayer",
+        "esri/geometry/Polyline",
+      ], function (Map, MapView, Graphic, GraphicsLayer, Polyline) {
+        const map = new Map({ basemap: "dark-gray-vector" });
+        const view = new MapView({
+          container: "map",
+          map: map,
+          center: [0, 120],
+          zoom: 4,
+        });
+        const trackLayer = new GraphicsLayer();
+        map.add(trackLayer);
+      });
+
+      // Load GeoJSON
+      fetch("Pope_Francis_2024_Trips.geojson")
+        .then((response) => response.json())
+        .then((data) => {
+          const markers = [];
+          data.features.forEach((feature, index) => {
+            const { title, description, time } = feature.properties;
+            const [lng, lat] = feature.geometry.coordinates;
+
+            const marker = L.marker([lat, lng]).bindPopup(
+              `<strong>${title}</strong><br>${description}<br>${time}`
+            );
+
+            setTimeout(() => {
+              marker.addTo(map).openPopup();
+            }, index * 2000); // Animate every 2 seconds
+
+            markers.push(marker);
+          });
+        });
+    </script>
+  </body>
+</html>

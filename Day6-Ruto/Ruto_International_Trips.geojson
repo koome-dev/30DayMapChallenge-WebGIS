@@ -1,0 +1,159 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -14.4524,
+                    14.4974
+                ]
+            },
+            "properties": {
+                "country": "Senegal",
+                "details": "Attended Feed Africa Dakar Summit, January 2023"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    29.9189,
+                    -3.3731
+                ]
+            },
+            "properties": {
+                "country": "Burundi",
+                "details": "Attended EAC summit on DRC security, February 2023"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    38.7578,
+                    9.145
+                ]
+            },
+            "properties": {
+                "country": "Ethiopia",
+                "details": "Attended AU summit on food security, February 2023"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    13.405,
+                    52.52
+                ]
+            },
+            "properties": {
+                "country": "Germany",
+                "details": "Keynote speaker at Berlin Energy Transition Dialogue, March 2023"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    4.3517,
+                    50.8503
+                ]
+            },
+            "properties": {
+                "country": "Belgium",
+                "details": "State visit discussing health and trade, March 2023"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    30.1044,
+                    -1.9403
+                ]
+            },
+            "properties": {
+                "country": "Rwanda",
+                "details": "State visit to discuss bilateral relations, April 2023"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    32.5825,
+                    0.3476
+                ]
+            },
+            "properties": {
+                "country": "Uganda",
+                "details": "Attended Heads of State Summit on Somalia, April 2023"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -0.1276,
+                    51.5074
+                ]
+            },
+            "properties": {
+                "country": "United Kingdom",
+                "details": "Attended Coronation of Charles III, May 2023"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    4.9041,
+                    52.3676
+                ]
+            },
+            "properties": {
+                "country": "Netherlands",
+                "details": "Attended Africa Climate Action Summit, May 2023"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    35.2137,
+                    31.7683
+                ]
+            },
+            "properties": {
+                "country": "Israel",
+                "details": "State visit for discussions on innovation, May 2023"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    12.4964,
+                    41.9028
+                ]
+            },
+            "properties": {
+                "country": "Italy",
+                "details": "Attended Italy Africa Summit, January 2024"
+            }
+        }
+    ]
+}

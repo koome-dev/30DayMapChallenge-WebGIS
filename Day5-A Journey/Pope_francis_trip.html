@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trip Tracker</title>
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.30/esri/themes/dark/main.css"
+    />
+    <script src="https://unpkg.com/@turf/turf/turf.min.js"></script>
+    <script src="https://js.arcgis.com/4.30/"></script>
+    <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+      #controlPanel {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #fff;
+        border-radius: 5px;
+        padding: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        width: 250px;
+      }
+      #downloadButton {
+        margin-top: 10px;
+        cursor: pointer;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="viewDiv"></div>
+
+    <!-- Control Panel combining all items -->
+    <div id="controlPanel">
+      <div id="infoPanel">
+        <p>
+          <strong>GPS Tracking Notice:</strong> Please enable GPS on your device
+          to track your journey. After enabling GPS, please
+          <strong>refresh the page</strong>. We do not store your location
+          data—tracking only occurs on your device.
+          <a href="#" id="closePanel">Close</a>
+        </p>
+      </div>
+      <div id="positionPanel">
+        <p>Current Position: <span id="currentPosition">Waiting...</span></p>
+      </div>
+      <button id="downloadButton">Download Route as GeoJSON</button>
+    </div>
+
+    <script>
+      require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/Graphic",
+        "esri/layers/GraphicsLayer",
+        "esri/geometry/Polyline",
+      ], function (Map, MapView, Graphic, GraphicsLayer, Polyline) {
+        const map = new Map({ basemap: "dark-gray-vector" });
+        const view = new MapView({
+          container: "viewDiv",
+          map: map,
+          center: [0, 0],
+          zoom: 2,
+        });
+        const trackLayer = new GraphicsLayer();
+        map.add(trackLayer);
+
+        let trackPoints = [];
+        let firstPosition = true;
+
+        // Show the info panel on load
+        document.getElementById("infoPanel").style.display = "block";
+
+        // Close the info panel when the link is clicked
+        document.getElementById("closePanel").onclick = (e) => {
+          e.preventDefault();
+          document.getElementById("infoPanel").style.display = "none";
+        };
+
+        // Watch for GPS position updates with error handling
+        if ("geolocation" in navigator) {
+          navigator.geolocation.watchPosition(
+            (position) => {
+              const point = [
+                position.coords.longitude,
+                position.coords.latitude,
+              ];
+              trackPoints.push(point);
+
+              // Draw line connecting points
+              const polyline = new Polyline({
+                paths: [trackPoints],
+                spatialReference: { wkid: 4326 },
+              });
+
+              const lineGraphic = new Graphic({
+                geometry: polyline,
+                symbol: { type: "simple-line", color: "cyan", width: 2 },
+              });
+
+              trackLayer.removeAll();
+              trackLayer.add(lineGraphic);
+
+              // Update current position in panel with 8 decimal places
+              document.getElementById(
+                "currentPosition"
+              ).textContent = `${point[1].toFixed(8)}, ${point[0].toFixed(8)}`;
+
+              // Center map smoothly on each new position with zoom level 15
+              const opts = { duration: 500 };
+              view.goTo({ target: point, zoom: 15 }, opts);
+            },
+            (error) => {
+              if (error.code === error.PERMISSION_DENIED) {
+                alert(
+                  "Please enable GPS on your device AND for the browser if needed - like on iPhone - for tracking. After enabling GPS, refresh this page."
+                );
+              }
+            },
+            { timeout: 5000 }
+          );
+        } else {
+          alert("GPS is not available on this device.");
+        }
+
+        // Download GeoJSON function
+        document.getElementById("downloadButton").onclick = () => {
+          const routeFeature = turf.lineString(trackPoints);
+          const geoJson = turf.featureCollection([routeFeature]);
+          const blob = new Blob([JSON.stringify(geoJson)], {
+            type: "application/json",
+          });
+          const url = URL.createObjectURL(blob);
+
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = "route.geojson";
+          link.click();
+          URL.revokeObjectURL(url); // Clean up URL object
+        };
+      });
+    </script>
+  </body>
+</html>
