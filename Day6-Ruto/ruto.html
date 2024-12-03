@@ -46,7 +46,7 @@
         onEachFeature: function (feature, layer) {
           if (feature.properties && feature.properties.details) {
             layer.bindPopup(
-              `<strong>${feature.properties.country}</strong><br>${feature.properties.details}`
+              `<strong>${feature.properties.country}</strong><br>${feature.properties.details}<br>${feature.properties.time}`
             );
           }
         },
@@ -54,15 +54,23 @@
       });
 
       // Load the GeoJSON data dynamically
-      fetch("Ruto_International_Trips.geojson")
+      fetch("Ruto_International_Trips_With_Timestamps.geojson")
         .then((response) => response.json())
         .then((data) => {
-          geojsonLayer.addData(data);
+          const waypoints = [];
+          geojsonLayer.addData(data).addTo(map);
+          waypoints.push([
+            feature.geometry.coordinates[1],
+            feature.geometry.coordinates[0],
+          ]);
 
           // TimeDimension layer
+          const polyline = L.polyline(waypoints, { color: "red" }).addTo(map);
           const timeLayer = L.timeDimension.layer.geoJson(geojsonLayer, {
             updateTimeDimension: true,
             addlastPoint: true,
+            duration: "PT2M",
+            updateTimeDimensionMode: "replace",
           });
           timeLayer.addTo(map);
         })
