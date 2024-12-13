@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Integrated Map Animation</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+    />
+    <style>
+      #map {
+        height: 100vh;
+      }
+      .leaflet-div-icon {
+        background: transparent;
+        border: 0;
+      }
+      .myplane {
+        font-size: 24px;
+        transform-origin: center;
+        transition: transform 0.1s;
+      }
+    </style>
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/esri-leaflet@3.0.6/dist/esri-leaflet.js"></script>
+  </head>
+  <body>
+    <div id="map"></div>
+
+    <script>
+      const map = L.map("map").setView([-1.286389, 36.817223], 3);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "&copy; OpenStreetMap contributors",
+      }).addTo(map);
+
+      L.esri.basemapLayer("DarkGray").addTo(map);
+
+      const nairobi = [-1.286389, 36.817223];
+
+      function calculateIntermediatePoint(start, end, fraction) {
+        const lat1 = toRadians(start[0]),
+          lon1 = toRadians(start[1]);
+        const lat2 = toRadians(end[0]),
+          lon2 = toRadians(end[1]);
+
+        const d = Math.acos(
+          Math.sin(lat1) * Math.sin(lat2) +
+            Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1)
+        );
+
+        const A = Math.sin((1 - fraction) * d) / Math.sin(d);
+        const B = Math.sin(fraction * d) / Math.sin(d);
+
+        const x = A * Math.cos(lat1) * Math.cos(lon1) + B * Math.cos(lat2) * Math.cos(lon2);
+        const y = A * Math.cos(lat1) * Math.sin(lon1) + B * Math.cos(lat2) * Math.sin(lon2);
+        const z = A * Math.sin(lat1) + B * Math.sin(lat2);
+
+        const lat = Math.atan2(z, Math.sqrt(x * x + y * y));
+        const lon = Math.atan2(y, x);
+
+        return [toDegrees(lat), toDegrees(lon)];
+      }
+
+      function toRadians(degrees) {
+        return (degrees * Math.PI) / 180;
+      }
+
+      function toDegrees(radians) {
+        return (radians * 180) / Math.PI;
+      }
+
+      fetch("Ruto_International_Trips_With_Timestamps.geojson")
+        .then((response) => response.json())
+        .then((data) => {
+          const destinations = data.features;
+          let currentIndex = 0;
+
+          const planeIcon = L.divIcon({
+            className: "leaflet-div-icon myplane",
+            html: "\u2708\uFE0F",
+            iconSize: [30, 30],
+          });
+          const flightMarker = L.marker(nairobi, { icon: planeIcon }).addTo(map);
+
+          function animateFlight(destination) {
+            const destCoords = destination.geometry.coordinates;
+            console.log("Animating flight from Nairobi to:", destCoords); // Debugging
+
+            const start = nairobi;
+            const end = [destCoords[1], destCoords[0]];
+
+            let step = 0;
+            const steps = 100;
+            const interval = 50;
+
+            // Draw the flight path
+            const flightPath = [];
+            for (let i = 0; i <= steps; i++) {
+              const fraction = i / steps;
+              flightPath.push(calculateIntermediatePoint(start, end, fraction));
+            }
+            L.polyline(flightPath, { color: "blue", weight: 2 }).addTo(map);
+
+            function moveMarker() {
+              if (step <= steps) {
+                const fraction = step / steps;
+                const nextPoint = calculateIntermediatePoint(start, end, fraction);
+                flightMarker.setLatLng(nextPoint);
+                step++;
+                setTimeout(moveMarker, interval);
+              } else {
+                showPopup(destination);
+              }
+            }
+
+            moveMarker();
+          }
+
+          function showPopup(destination) {
+            const { country, details, time } = destination.properties;
+            const [lng, lat] = destination.geometry.coordinates;
+            console.log("Reached destination:", { country, details, time }); // Debugging
+
+            const marker = L.marker([lat, lng]).bindPopup(
+              `<strong>${country}</strong><br>${details}<br>${time}`
+            );
+            marker.addTo(map).openPopup();
+
+            currentIndex++;
+            if (currentIndex < destinations.length) {
+              setTimeout(() => animateFlight(destinations[currentIndex]), 2000);
+            }
+          }
+
+          animateFlight(destinations[currentIndex]);
+        })
+        .catch((error) => console.error("Error loading GeoJSON:", error));
+    </script>
+  </body>
+</html>

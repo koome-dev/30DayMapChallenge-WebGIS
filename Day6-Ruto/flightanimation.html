@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Path Animation</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 600px;
+        }
+        .leaflet-container {
+            height: 100%;
+        }
+        .leaflet-div-icon {
+            background: #ffffff00;
+            border: 0px solid #666;
+        }
+        .myplane {
+            font-size: 24px; /* Plane size */
+            transform-origin: center; /* Keep rotation centered */
+            transition: transform 0s; /* Disable transition during animation */
+        }
+    </style>
+</head>
+<body>
+
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+    <script>
+        // Create map and set initial view
+        const map = L.map('map').setView([51.1657, 10.4515], 2); // Centered over Europe initially
+
+        // Add OpenStreetMap base layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Coordinates for Northern Sweden (Kiruna) and Northern Canada (Inuvik)
+        const paraguay = [-25.2637, -57.5759];  // Paraguay (Asunción)
+        const sweden = [67.8558, 20.2253];      // Northern Sweden (Kiruna)
+
+        // Calculate Great Circle Path using a correct method
+        const greatCirclePath = getGreatCircle(paraguay, sweden);
+
+        // Create polyline from Great Circle path
+        const flightPath = L.polyline(greatCirclePath, { color: 'blue', weight: 4 }).addTo(map);
+
+        // Add an animated marker (flight) along the path with plane icon
+        const flightMarker = L.marker(sweden, {
+            icon: L.divIcon({
+                className: 'leaflet-div-icon myplane',
+                html: '✈️',  // Plane icon
+                iconSize: [30, 30]
+            })
+        }).addTo(map);
+
+        // Function to animate the flight along the Great Circle path
+        function animateFlight() {
+            const totalDuration = 10000; // 10 seconds flight time
+            const interval = 100; // Time interval between updates in milliseconds
+            const numSteps = greatCirclePath.length; // Number of steps (points) to animate
+            let currentStep = 0;
+
+            function moveMarker() {
+                if (currentStep < numSteps) {
+                    const nextPoint = greatCirclePath[currentStep];
+                    const nextStep = greatCirclePath[currentStep + 1];
+                    flightMarker.setLatLng(nextPoint);
+
+                    // Calculate the bearing (angle) for rotation using the Great Circle formula
+                    if (nextStep) {
+                        const angle = calculateBearing(nextPoint[0], nextPoint[1], nextStep[0], nextStep[1]);
+                        flightMarker._icon.style.transform += ' rotate(' + (angle - 45) + 'deg) '; // Apply rotation
+                    }
+
+                    currentStep++;
+                    setTimeout(moveMarker, interval); // Move the marker every 100 ms
+                }
+            }
+
+            moveMarker(); // Start the animation
+        }
+
+        // Function to get the Great Circle path between two points
+        function getGreatCircle(start, end, numPoints = 100) {
+            const path = [];
+            const lat1 = toRadians(start[0]), lon1 = toRadians(start[1]);
+            const lat2 = toRadians(end[0]), lon2 = toRadians(end[1]);
+
+            // Calculate the central angle
+            const dLat = lat2 - lat1;
+            const dLon = lon2 - lon1;
+
+            // Using the spherical law of cosines to calculate the path
+            for (let i = 0; i <= numPoints; i++) {
+                const fraction = i / numPoints;
+                const A = Math.sin((1 - fraction) * dLat) / Math.sin(dLat);
+                const B = Math.sin(fraction * dLat) / Math.sin(dLat);
+
+                const x = A * Math.cos(lat1) * Math.cos(lon1) + B * Math.cos(lat2) * Math.cos(lon2);
+                const y = A * Math.cos(lat1) * Math.sin(lon1) + B * Math.cos(lat2) * Math.sin(lon2);
+                const z = A * Math.sin(lat1) + B * Math.sin(lat2);
+
+                const lat = Math.atan2(z, Math.sqrt(x * x + y * y));
+                const lon = Math.atan2(y, x);
+
+                path.push([toDegrees(lat), toDegrees(lon)]);
+            }
+
+            return path;
+        }
+
+        // Function to calculate the bearing (angle) between two geographic points
+        function calculateBearing(lat1, lon1, lat2, lon2) {
+            const dLon = toRadians(lon2 - lon1);
+            lat1 = toRadians(lat1);
+            lat2 = toRadians(lat2);
+
+            const y = Math.sin(dLon) * Math.cos(lat2);
+            const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+            let bearing = Math.atan2(y, x);
+            bearing = toDegrees(bearing);
+            return (bearing + 360) % 360; // Normalize to 0-360 degrees
+        }
+
+        function toRadians(degrees) {
+            return degrees * Math.PI / 180;
+        }
+
+        function toDegrees(radians) {
+            return radians * 180 / Math.PI;
+        }
+
+        // Start the animation when the page loads
+        animateFlight();
+    </script>
+
+</body>
+</html>

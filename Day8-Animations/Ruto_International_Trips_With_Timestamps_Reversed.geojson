@@ -1,0 +1,230 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52,
+          -0.2
+        ]
+      },
+      "properties": {
+        "country": "United Kingdom",
+        "details": "State funeral of Queen Elizabeth II",
+        "time": "2022-09-19"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          40,
+          -74
+        ]
+      },
+      "properties": {
+        "country": "United States",
+        "details": "Attended Seventy seventh session of the United Nations General Assembly",
+        "time": "2022-09-21"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          9,
+          38
+        ]
+      },
+      "properties": {
+        "country": "Ethiopia",
+        "details": "Attended the launch of Safaricom Ethiopia",
+        "time": "2022-10-06"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.3,
+          33
+        ]
+      },
+      "properties": {
+        "country": "Uganda",
+        "details": "State visit- Uganda's 60th Independence day celebrations",
+        "time": "2022-10-09"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          14.4974,
+          -14.4524
+        ]
+      },
+      "properties": {
+        "country": "Senegal",
+        "details": "Attended Feed Africa Dakar Summit",
+        "time": "2023-01-25"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.3731,
+          29.9189
+        ]
+      },
+      "properties": {
+        "country": "Burundi",
+        "details": "Attended EAC summit on DRC security",
+        "time": "2023-02-04"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          9.145,
+          38.7578
+        ]
+      },
+      "properties": {
+        "country": "Ethiopia",
+        "details": "Attended AU summit on food security",
+        "time": "2023-02-18"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.52,
+          13.405
+        ]
+      },
+      "properties": {
+        "country": "Germany",
+        "details": "Keynote speaker at Berlin Energy Transition Dialogue",
+        "time": "2023-03-28"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          50.8503,
+          4.3517
+        ]
+      },
+      "properties": {
+        "country": "Belgium",
+        "details": "State visit discussing health and trade",
+        "time": "2023-03-30"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.9403,
+          30.1044
+        ]
+      },
+      "properties": {
+        "country": "Rwanda",
+        "details": "State visit to discuss bilateral relations",
+        "time": "2023-04-10"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.3476,
+          32.5825
+        ]
+      },
+      "properties": {
+        "country": "Uganda",
+        "details": "Attended Heads of State Summit on Somalia",
+        "time": "2023-04-25"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.5074,
+          -0.1276
+        ]
+      },
+      "properties": {
+        "country": "United Kingdom",
+        "details": "Attended Coronation of Charles III",
+        "time": "2023-05-06"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.3676,
+          4.9041
+        ]
+      },
+      "properties": {
+        "country": "Netherlands",
+        "details": "Attended Africa Climate Action Summit",
+        "time": "2023-05-15"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          31.7683,
+          35.2137
+        ]
+      },
+      "properties": {
+        "country": "Israel",
+        "details": "State visit for discussions on innovation",
+        "time": "2023-05-20"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          41.9028,
+          12.4964
+        ]
+      },
+      "properties": {
+        "country": "Italy",
+        "details": "Attended Italy Africa Summit",
+        "time": "2024-01-15"
+      }
+    }
+  ]
+}
